@@ -1,0 +1,14 @@
+public interface ClerkDao {
+		//C
+		void addClerk(Clerk cl);
+		void addCustomer(Customer cu);
+		//R
+		List<Customer> queryAllCustomer();
+		Customer queryCustomerByCu(int cu);
+		Clerk queryClerk(String username,String password);
+		Clerk queryUsername(String username);
+		//U
+		Customer updateCustomer(Customer cu);
+		//D
+		void delCustomer(int cu);
+}
