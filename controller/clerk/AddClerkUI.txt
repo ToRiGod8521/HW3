@@ -1,0 +1,37 @@
+JButton btnNewButton = new JButton("註冊");
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String Username=username.getText();
+				
+				Clerk cl =new ClerkDaoImpl().queryUsername(Username);
+				if(cl != null)
+				{
+					AddClerkErrorUI a =new AddClerkErrorUI();
+					a.setVisible(true);
+					dispose();
+				}else {
+					String Name=name.getText();
+					String Password=password.getText();
+					String Address =address.getText();
+					String Phone = phone.getText();
+					String ID =id.getText();	
+					
+					Clerk cl2 =new Clerk(Name, Username, Password, Address, Phone, ID);
+					new ClerkDaoImpl().addClerk(cl2);
+					
+					AddClerkSuccessUI a =new AddClerkSuccessUI();
+					a.setVisible(true);
+					dispose();
+				}
+				
+			}
+		});
+
+JButton btnNewButton_1 = new JButton("離開");
+		btnNewButton_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.exit(0);
+			}
+		});
