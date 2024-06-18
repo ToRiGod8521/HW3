@@ -1,0 +1,167 @@
+btnNewButton = new JButton("新增");
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int Deposit = Integer.parseInt(deposit.getText());
+				Customer cu = new Customer(name.getText(), username.getText(), password.getText(), Deposit,
+						address.getText(), phone.getText(), id.getText());
+				new ClerkDaoImpl().addCustomer(cu);
+				String s = "";
+				name.setText(s);
+				username.setText(s);
+				password.setText(s);
+				deposit.setText(s);
+				address.setText(s);
+				phone.setText(s);
+				id.setText(s);
+			}
+		});
+
+btnNewButton_1 = new JButton("清空");
+		btnNewButton_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String s = "";
+				name.setText(s);
+				username.setText(s);
+				password.setText(s);
+				deposit.setText(s);
+				address.setText(s);
+				phone.setText(s);
+				id.setText(s);
+			}
+		});
+
+btnNewButton_2 = new JButton("修改");
+		btnNewButton_2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int Cu = Integer.parseInt(cu.getText());
+				String name = name1.getText();
+				String password = password1.getText();
+				int deposit = Integer.parseInt(deposit1.getText());
+				String address = address1.getText();
+				String phone = phone1.getText();
+				String id = id1.getText();
+
+				Customer upcu = new ClerkDaoImpl().queryCustomerByCu(Cu);
+				upcu.setName(name);
+				upcu.setPassword(password);
+				upcu.setDeposit(deposit);
+				upcu.setAddress(address);
+				upcu.setPassword(phone);
+				upcu.setId(id);
+
+				new ClerkDaoImpl().updateCustomer(upcu);
+
+				String s = "";
+				cu.setText(s);
+				name1.setText(s);
+				password1.setText(s);
+				deposit1.setText(s);
+				address1.setText(s);
+				phone1.setText(s);
+				id1.setText(s);
+			}
+		});
+
+btnNewButton_4 = new JButton("刪除");
+		btnNewButton_4.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int Cu = Integer.parseInt(cu1.getText());
+				new ClerkDaoImpl().delCustomer(Cu);
+				cu1.setText("");
+			}
+		});
+
+JButton btnNewButton_6 = new JButton("全部查詢");
+		btnNewButton_6.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				output.setText("");
+				List<Customer> l = new ClerkDaoImpl().queryAllCustomer();
+				Customer[] c = l.toArray(new Customer[l.size()]);
+				String show = "";
+				for (int i = 0; i < c.length; i++) {
+					show += "代碼(CU):" + c[i].getCu() + "\t姓名:" + c[i].getName() + "\t帳號:" + c[i].getUsername() + "\t密碼:"
+							+ c[i].getPassword() + "\t存款:" + c[i].getDeposit() + "\t地址:" + c[i].getAddress() + "\t電話:"
+							+ c[i].getPhone() + "      ID:" + c[i].getId()
+							+ "\n=================================================================================================\n";
+				}
+				output.setText(show);
+			}
+		});
+
+JButton btnNewButton_7 = new JButton("查詢");
+		btnNewButton_7.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				output.setText("");
+				int Cu = Integer.parseInt(cu2.getText());
+				Customer cu =new ClerkDaoImpl().queryCustomerByCu(Cu);
+				String show="";
+				show="代碼(CU):" + cu.getCu() + "\t姓名:" + cu.getName() + "\t帳號:" + cu.getUsername() + "\t密碼:"
+						+ cu.getPassword() + "\t存款:" + cu.getDeposit() + "\t地址:" + cu.getAddress() + "\t電話:"
+						+ cu.getPhone() + "\nID:" + cu.getId();
+				cu2.setText("");
+				output.setText(show);
+			}
+		});
+
+btnNewButton_8 = new JButton("列印");
+		btnNewButton_8.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//實現列印功能
+				PrinterJob job = PrinterJob.getPrinterJob();
+				job.setPrintable(new Printable() {
+					
+					@Override
+					public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+						if (pageIndex>0) {
+							return NO_SUCH_PAGE;
+						}
+						 Graphics2D g2d = (Graphics2D) graphics;
+	                        g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+	                        g2d.setClip((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY(),
+                                    (int) pageFormat.getImageableWidth(), (int) pageFormat.getImageableHeight());
+	                        // 繪製標頭“巨匠銀行”
+	                        g2d.setFont(new Font("Serif", Font.BOLD, 18)); // 設置字體和大小
+	                        g2d.drawString("巨匠銀行--客戶名單", 0, 20); // 在指定位置繪製標頭
+	                        
+	                     // 獲取 JTextArea 的尺寸和內容
+	                        Dimension areaSize = output.getSize();
+	                        output.setSize((int) pageFormat.getImageableWidth(), areaSize.height);
+	                        
+	                        boolean wasBuffered = output.isDoubleBuffered();
+	                        output.setDoubleBuffered(false);
+	                        
+	                     // 將 JTextArea 的內容下移，以避免覆蓋標頭
+	                        g2d.translate(0, 30); // 下移 30 像素
+	                        
+	                     // 計算縮放比例以適應A4紙張
+	                        double scaleX = pageFormat.getImageableWidth() / areaSize.width;
+	                        double scaleY = (pageFormat.getImageableHeight() - 30) / areaSize.height; // 減去標頭的高度
+	                        double scale = Math.min(scaleX, scaleY);
+	                        g2d.scale(scale, scale);
+
+	                        // 打印 JTextArea 的內容
+	                        output.paint(g2d);
+
+	                        output.setSize(areaSize);
+	                        output.setDoubleBuffered(wasBuffered);
+
+	                        return PAGE_EXISTS;
+					}
+				});
+				boolean doPrint = job.printDialog();
+                if (doPrint) {
+                    try {
+                        job.print();
+                    } catch (PrinterException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+			}
+		});
